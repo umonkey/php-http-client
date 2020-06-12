@@ -1,0 +1,23 @@
+{
+    "name": "umonkey/php-http-client",
+    "description": "Simple HTTP client",
+    "version": "1.0.0",
+    "type": "library",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "homepage": "https://github.com/umonkey/php-http-client/",
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Umonkey\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Justin Forest",
+            "email": "hex@umonkey.net"
+        }
+    ]
+}
