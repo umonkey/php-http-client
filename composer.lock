@@ -4,12 +4,142 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d516d530213f28128224a397546a6ed7",
-    "packages": [],
+    "content-hash": "23e75c109eaf3cb7588c852a3f798eac",
+    "packages": [
+        {
+            "name": "psr/simple-cache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/simple-cache.git",
+                "reference": "5a7b96b1dda5d957e01bc1bfe77dcca09c5a7474"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/simple-cache/zipball/5a7b96b1dda5d957e01bc1bfe77dcca09c5a7474",
+                "reference": "5a7b96b1dda5d957e01bc1bfe77dcca09c5a7474",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\SimpleCache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interfaces for simple caching",
+            "keywords": [
+                "cache",
+                "caching",
+                "psr",
+                "psr-16",
+                "simple-cache"
+            ],
+            "time": "2020-04-21T06:43:17+00:00"
+        },
+        {
+            "name": "umonkey/php-cache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/umonkey/php-cache.git",
+                "reference": "cca8d0b299e5f2da99726d0098bc3ddc08a6706a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/umonkey/php-cache/zipball/cca8d0b299e5f2da99726d0098bc3ddc08a6706a",
+                "reference": "cca8d0b299e5f2da99726d0098bc3ddc08a6706a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2",
+                "psr/simple-cache": "^1.",
+                "umonkey/php-dbal": "dev-master"
+            },
+            "provide": {
+                "psr/simple-cache-implementation": "1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Umonkey\\Cache\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Justin Forest",
+                    "email": "hex@umonkey.net"
+                }
+            ],
+            "description": "Simple PSR-16 compliant cache component",
+            "homepage": "https://github.com/umonkey/php-cache/",
+            "time": "2020-06-18T18:11:04+00:00"
+        },
+        {
+            "name": "umonkey/php-dbal",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/umonkey/php-dbal.git",
+                "reference": "212c590fb98f1daa616288238d3bf5768d1161f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/umonkey/php-dbal/zipball/212c590fb98f1daa616288238d3bf5768d1161f2",
+                "reference": "212c590fb98f1daa616288238d3bf5768d1161f2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Umonkey\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Justin Forest",
+                    "email": "hex@umonkey.net"
+                }
+            ],
+            "description": "Simple database abstraction layer",
+            "homepage": "https://github.com/umonkey/php-dbal/",
+            "time": "2020-06-12T23:59:18+00:00"
+        }
+    ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "umonkey/php-cache": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -7,7 +7,8 @@
     "license": "MIT",
     "homepage": "https://github.com/umonkey/php-http-client/",
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "umonkey/php-cache": "dev-master"
     },
     "autoload": {
         "psr-4": {
