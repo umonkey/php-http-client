@@ -30,3 +30,11 @@ $container['http'] = function ($c) {
     return $c['callableResolver']->getClassInstance('Umonkey\HttpClient');
 };
 ```
+
+
+## Changes
+
+2020/07/01:
+
+- Added method HttpClient::urljoin().
+- Added URL rewrite.
