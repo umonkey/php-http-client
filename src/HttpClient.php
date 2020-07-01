@@ -60,7 +60,36 @@ class HttpClient
     /**
      * @var int
      **/
-    protected $throttle
+    protected $throttle;
+
+    /**
+     * More request headers.
+     *
+     * @var array
+     **/
+    protected $headers;
+
+    /**
+     * Extra curl options.
+     *
+     * @var array
+     **/
+    protected $curl_options;
+
+    /**
+     * Proxy settings.
+     * Example: socks5://1.2.3.4:567
+     *
+     * @var string|null
+     **/
+    protected $proxy;
+
+    /**
+     * Last request timestamp.
+     *
+     * @var float
+     **/
+    protected $lastRequestTime = 0;
 
     public function __construct(LoggerInterface $logger, CacheInterface $cache, $settings)
     {
@@ -72,6 +101,9 @@ class HttpClient
         $this->cacheLimit = $settings['httpClient']['cache_limit'] ?? null;
         $this->userAgent = $settings['httpClient']['agent'] ?? 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0';
         $this->throttle = $settings['httpClient']['throttle'] ?? 0;
+        $this->headers = $settings['httpClient']['headers'] ?? [];
+        $this->curl_options = $settings['httpClient']['curl_options'] ?? [];
+        $this->proxy = $settings['httpClient']['proxy'] ?? null;
     }
 
     public function buildURL(string $base, array $args = []): string
@@ -112,20 +144,42 @@ class HttpClient
             }
         }
 
-        $ts = microtime(true);
+        $cacheKey = ($this->cacheTtl && $this->cacheLimit)
+            ? md5(serialize([$method, $url, $payload]))
+            : null;
 
-        if (isset($this->settings['headers'])) {
-            $headers = array_replace($this->settings['headers'], $headers);
+        if ($cacheKey !== null) {
+            $item = $this->cache->get($cacheKey);
+            if (is_array($item) && strlen($item['data']) < $this->cacheLimit) {
+                $item['cached'] = true;
+                $res = new HttpResponse($item);
+
+                $this->logger->debug('http {method} to {url} status={status} type={type} length={length} duration=0 (cached)', [
+                    'url' => $url,
+                    'method' => strtolower($method),
+                    'status' => $res->getStatus(),
+                    'type' => $res->getType(),
+                    'length' => $res->getLength(),
+                ]);
+
+                return $res;
+            }
         }
 
-        $curlOptions = $this->settings['curl_options'] ?? [];
+        $ts = microtime(true);
+
+        if (isset($this->headers)) {
+            $headers = array_replace($this->headers, $headers);
+        }
+
+        $curlOptions = $this->curl_options;
         $curlOptions[\CURLOPT_URL] = $url;
         $curlOptions[\CURLOPT_HTTPHEADER] = $headers;
         $curlOptions[\CURLOPT_RETURNTRANSFER] = 1;
         $curlOptions[\CURLOPT_FOLLOWLOCATION] = false;
 
-        if (isset($this->settings['proxy'])) {
-            $curlOptions[\CURLOPT_PROXY] = $this->settings['proxy'];
+        if (isset($this->proxy)) {
+            $curlOptions[\CURLOPT_PROXY] = $this->proxy;
         }
 
         if ($method === 'POST') {
@@ -150,7 +204,7 @@ class HttpClient
             }
 
             return strlen($header);
-        });
+        };
 
         $this->throttle($url);
 
@@ -159,13 +213,23 @@ class HttpClient
         $res['data'] = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            throw new \RuntimeException(curl_error($ch));
+            $this->logger->error('http {method} to {url} error={error}', [
+                'url' => $url,
+                'method' => strtolower($method),
+                'error' => curl_error($ch),
+            ]);
+            throw new \RuntimeException('HTTP request failed');
+        }
+
+        if ($cacheKey !== null && strlen($res['data']) < $this->cacheLimit) {
+            $this->cache->set($cacheKey, $res, $this->cacheTtl);
         }
 
         $res = new HttpResponse($res);
 
         $this->logger->debug('http {method} to {url} status={status} type={type} length={length} duration={dur}', [
             'url' => $url,
+            'method' => strtolower($method),
             'status' => $res->getStatus(),
             'type' => $res->getType(),
             'length' => $res->getLength(),
@@ -187,7 +251,15 @@ class HttpClient
     protected function throttle(string $url): void
     {
         if ($this->throttle) {
-            sleep($this->throttle);
+            $now = microtime(true);
+            $passed = $now - $this->lastRequestTime;
+
+            if ($passed < $this->throttle) {
+                $delay = $this->throttle - $passed;
+                usleep((int)($delay * 1000000));
+            }
+
+            $this->lastRequestTime = $now;
         }
     }
 }
