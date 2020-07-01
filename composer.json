@@ -1,7 +1,7 @@
 {
     "name": "umonkey/php-http-client",
     "description": "Simple HTTP client",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "type": "library",
     "minimum-stability": "dev",
     "license": "MIT",
